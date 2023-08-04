@@ -1,0 +1,62 @@
+{% extends "blogs/index.html" %}
+{% load static %}
+{% block content %}
+
+	<div class="section search-result-wrap">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<div class="heading">
+                        {{ list_heading }}
+                        <a href="#" class="btn btn-primary btn-sm rounded px-2 py-2" style="position: absolute; right: 220px; top: 140px;">Create New Draft</a>
+                    </div>
+				</div>
+			</div>
+			<div class="row posts-entry">
+                    {% if blog_list %}
+                        <ul>
+                        {% for blog in blog_list %}
+                            <div class="blog-entry d-flex blog-entry-search-item">
+						<a href="single.html" class="img-link me-4">
+							<img src="{% get_static_prefix %}blogs/images/{{blog.headerimage}}" alt="Image" class="img-fluid" style="width: 300px; height: 200px; object-fit: cover;">
+						</a>
+						<div>
+							<span class="date">{{blog.date}} &bullet; <a href="#">{{blog.topic}}</a></span>
+							<h2><a href="single.html">{{ blog.heading }}</a></h2>
+							<p>{{ blog.description }}</p>
+							<p>
+                                <a href="" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="" class="btn btn-sm btn-outline-primary">Delete</a>
+                                {% if list_heading == "PUBLISHED" %}
+                                    <a href="" class="btn btn-sm btn-outline-primary">View</a>
+                                {% endif %}
+
+                            </p>
+						</div>
+					</div>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No blogs are available.</p>
+                    {% endif %}
+
+
+{#					<div class="row text-start pt-5 border-top">#}
+{#						<div class="col-md-12">#}
+{#							<div class="custom-pagination">#}
+{#								<span>1</span>#}
+{#								<a href="#">2</a>#}
+{#								<a href="#">3</a>#}
+{#								<a href="#">4</a>#}
+{#								<span>...</span>#}
+{#								<a href="#">15</a>#}
+{#							</div>#}
+{#						</div>#}
+{#					</div>#}
+
+				</div>
+		</div>
+	</div>
+
+
+{% endblock %}
