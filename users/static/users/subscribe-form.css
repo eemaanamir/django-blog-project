@@ -1,0 +1,300 @@
+/* Remove the universal selector */
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-transition: 0.2s ease-in-out;
+  -moz-transition: 0.2s ease-in-out;
+  -o-transition: 0.2s ease-in-out;
+  transition: 0.2s ease-in-out;
+  font-family: "proxima-nova", sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #6C7A89;
+} */
+
+/*body {*/
+/*  background-color: #e2fbf5;*/
+/*}*/
+
+/* Apply the relevant styles to the class types */
+
+#sub-wrapper,
+#sub-container,
+#sub-info,
+#sub-info #sub-product,
+#sub-info p,
+#sub-info #sub-price,
+#sub-info #sub-price h2,
+#sub-payment,
+#sub-checkout,
+#sub-checkout input,
+#sub-checkout label,
+#sub-checkout #sub-cvc-label,
+#sub-checkout .sub-card,
+#sub-checkout .sub-card:focus,
+#sub-checkout #sub-visa,
+#sub-checkout #sub-mastercard,
+#sub-checkout #sub-cardnumber,
+#sub-checkout #sub-cardnumber::-webkit-input-placeholder,
+#sub-checkout #sub-left,
+#sub-checkout #sub-left #sub-month,
+#sub-checkout #sub-left #sub-year,
+#sub-checkout #sub-left option,
+#sub-checkout #sub-left p,
+#sub-checkout #sub-cvc,
+#sub-checkout .sub-btn,
+#sub-checkout .sub-btn:hover {
+  box-sizing: border-box;
+  -webkit-transition: 0.2s ease-in-out;
+  -moz-transition: 0.2s ease-in-out;
+  -o-transition: 0.2s ease-in-out;
+  transition: 0.2s ease-in-out;
+  font-family: "proxima-nova", sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #0a3139;
+}
+
+#sub-wrapper {
+  position: sticky;
+  top: 50%;
+  margin-top: -240px;
+  left: 0;
+  width: 100%;
+}
+
+#sub-container {
+  width: 420px;
+  height: 480px;
+  margin: 0 auto;
+  box-shadow: 1px 1px 10px 2px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  overflow: hidden;
+  background: #0f5464;
+  background: -moz-linear-gradient(45deg, #0f5464 0%, #3892a6 60%, #3892a6 60%, #fff 100%);
+  background: -webkit-linear-gradient(45deg, #0f5464 0%, #3892a6 60%, #3892a6 60%, #fff 100%);
+  background: linear-gradient(45deg, #0f5464 0%, #3892a6 60%, #3892a6 60%, #fff 100%);
+}
+
+#sub-info {
+  width: 52%;
+  height: 480px;
+  float: left;
+  background: -moz-linear-gradient(45deg, #95a5a6 0%, rgba(208, 215, 216, 0) 56%, rgba(255, 255, 255, 0) 100%);
+  background: -webkit-linear-gradient(45deg, #95a5a6 0%, rgba(208, 215, 216, 0) 56%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(45deg, #95a5a6 0%, rgba(208, 215, 216, 0) 56%, rgba(255, 255, 255, 0) 100%);
+}
+
+#sub-info #sub-product {
+  width: 500px;
+  margin: -50px 0 -85px -65px;
+}
+
+#sub-info p {
+  width: 100%;
+  text-align: center;
+  line-height: 1.5em;
+  letter-spacing: 1px;
+}
+
+#sub-info #sub-price {
+  width: 50%;
+  margin: 0 auto;
+  letter-spacing: 1px;
+}
+
+#sub-info #sub-price h2 {
+  width: 100%;
+  text-align: center;
+  font-weight: 700;
+  color: #000;
+  padding-top: 10px;
+}
+
+#sub-payment {
+  width: 100%;
+  padding: 95px 50px 25px 50px;
+}
+
+#sub-checkout {
+  width: 100%;
+}
+
+#sub-checkout input {
+  margin-bottom: 15px;
+}
+
+#sub-checkout label {
+  float: left;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 0.6em;
+  padding: 0 0 5px 10px;
+  color: #0a3139
+}
+
+#sub-checkout #sub-cvc-label {
+  margin-left: 25px;
+}
+
+#sub-checkout .sub-card {
+  width: 29%;
+  margin: 0 10% 25px 10%;
+  border: none;
+  background: none;
+  height: 50px;
+  cursor: pointer;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
+
+#sub-checkout .sub-card:focus {
+  -webkit-filter: none;
+  filter: none;
+}
+
+#sub-checkout #sub-visa {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+#sub-checkout #sub-mastercard {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 118%;
+}
+
+#sub-checkout #sub-cardnumber,
+#sub-checkout #sub-cardholder,
+#sub-checkout #sub-cvc {
+  width: 100%;
+  background: none;
+  border: 1px solid #0a3139;
+  padding: 8px 19px;
+  border-radius: 50px;
+  letter-spacing: 1px;
+}
+
+#sub-checkout #sub-cardnumber:focus,
+#sub-checkout #sub-cardholder:focus,
+#sub-checkout #sub-cvc:focus {
+  border: 1px solid #0a3139;
+}
+
+#sub-checkout ::-webkit-input-placeholder {
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  /*color: #BDC3C7;*/
+}
+
+#sub-checkout #sub-cardnumber {
+  letter-spacing: 3px;
+}
+
+#sub-checkout #sub-cardnumber::-webkit-input-placeholder {
+  font-size: 1em;
+  color:#a2a7ac;
+}
+
+#sub-checkout #sub-left {
+  width: 41%;
+  border: 1px solid #0a3139;
+  border-radius: 50px;
+  overflow: hidden;
+  padding: 3px 5px;
+  float: left;
+}
+
+
+#sub-checkout #sub-left select {
+  background: none;
+  border: 1px solid #0a3139;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 0.8em;
+  letter-spacing: 3px;
+  color: #6C7A89;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+#sub-checkout #sub-left span {
+  padding-top: 2px;
+  font-size: 1.2em;
+  color: #0a3139;
+  letter-spacing: 3px;
+  margin: 0 5px; /* Add some space between the dropdowns and the slash */
+}
+
+
+#sub-checkout #sub-left #sub-month,
+#sub-checkout #sub-left #sub-year {
+  background: none;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  float: left;
+  font-size: 0.8em;
+  letter-spacing: 3px;
+  color: #a2a7ac;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+#sub-checkout #sub-left option {
+  background: #ECECEC;
+}
+
+#sub-checkout #sub-left p {
+  float: left;
+  padding-top: 2px;
+  font-size: 1.2em;
+  color: #BDC3C7;
+  letter-spacing: 3px;
+}
+
+#sub-checkout #sub-cvc {
+  width: 48%;
+  float: left;
+  margin-left: 11%;
+}
+
+#sub-checkout .sub-btn {
+  background: #0a3139;
+  border: none;
+  width: 100%;
+  padding: 12px 10px 10px 10px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 400;
+  color: #ECECEC;
+  cursor: pointer;
+}
+
+#sub-checkout .sub-btn:hover {
+  background: #0d3a44;
+}
+
+.bg-img {
+  height: 80vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.bg-img img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+

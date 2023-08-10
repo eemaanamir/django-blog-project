@@ -66,10 +66,10 @@
     {#							</form>#}
                                 <div class="post-meta align-items-center text-center">
                                     <div style = "position:relative; top:10px;">
-                                        <figure class="author-figure mb-0 me-3 d-inline-block"><img src="{% get_static_prefix %}blogs/images/{{current_user.image}}" alt="Image" class="img-fluid"></figure>
+                                        <figure class="author-figure mb-0 me-3 d-inline-block"><img src="{{request.user.profile.user_dp.url}}" alt="Image" class="img-fluid"></figure>
                                         <ul class="js-clone-nav d-none d-lg-inline-block text-start site-menu mx-auto">
                                             <li class="has-children">
-                                                <a>{{ current_user.name}}</a>
+                                                <a>{{request.user.first_name}} {{ request.user.last_name }}</a>
                                                 <ul class="dropdown">
                                                     <li><a href="">View Profile</a></li>
                                                     <li><a href="">Edit Profile</a></li>

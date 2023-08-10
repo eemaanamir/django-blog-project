@@ -17,7 +17,7 @@
       <div class="container-fluid d-flex align-items-center">
         <div class="row">
           <div class="col-lg-7 col-md-10">
-            <h1 class="display-2 text-white">Hello {{ current_user.fname }}</h1>
+            <h1 class="display-2 text-white">Hello {{ request.user.first_name }}</h1>
             <p class="text-white mt-0 mb-5">This is your edit profile page. You can see the current details of your profile and edit them from here.</p>
           </div>
         </div>
@@ -31,16 +31,19 @@
             <div class="row justify-content-center">
               <div class="col-lg-3 order-lg-2">
                 <div class="card-profile-image">
-                  <a href="#">
-                    <img src="{% get_static_prefix %}blogs/images/{{current_user.image}}" class="rounded-circle">
-                  </a>
+                        <img src="{{request.user.profile.user_dp.url}}" class="rounded-circle">
                 </div>
               </div>
             </div>
             <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
               <div class="d-flex justify-content-between">
-                  <input type="file" id="upload" hidden/>
-                    <label for="upload" class="btn btn-sm btn-info mr-4">Change Picture</label>
+                  <form method="POST">
+                      {% csrf_token %}
+                      <input name="user_dp" type="file" id="upload" hidden/>
+                        <label for="upload" class="btn btn-sm btn-info mr-4">Select Picture</label>
+                      <br>
+                      <button id="submit_button" name="button" value="picture_change" type="submit" class="btn btn-sm btn-info mr-4">Save Picture</button>
+                  </form>
                   <div>
                     <a href="#" class="btn btn-sm btn-default float-right">Add Credit Card</a>
                     </div>
@@ -51,15 +54,15 @@
                 <div class="col">
                   <div class="card-profile-stats d-flex justify-content-center mt-md-5">
                     <div>
-                      <span class="heading">{{ current_user.blog_count }}</span>
+                      <span class="heading">{{ request.user.profile.blog_count }}</span>
                       <span class="description">Blogs</span>
                     </div>
                     <div>
-                      <span class="heading">{{ current_user.followers }}</span>
+                      <span class="heading">{{ request.user.profile.followers }}</span>
                       <span class="description">Followers</span>
                     </div>
                     <div>
-                      <span class="heading">{{ current_user.likes }}</span>
+                      <span class="heading">{{ request.user.profile.likes }}</span>
                       <span class="description">Likes</span>
                     </div>
                   </div>
@@ -67,13 +70,13 @@
               </div>
               <div class="text-center">
                 <h3>
-                    {{ current_user.name}}
+                    {{request.user.first_name}} {{ request.user.last_name }}
                 </h3>
                 <div class="h5 font-weight-300">
-                  <i class="ni location_pin mr-2"></i>{{ current_user.user_type}}
+                  <i class="ni location_pin mr-2"></i>{{ request.user.profile.user_type}}
                 </div>
                 <hr class="my-4">
-                <p>{{ current_user.bio }}</p>
+                <p>{{ request.user.profile.user_bio }}</p>
               </div>
             </div>
           </div>
@@ -85,26 +88,28 @@
                 <div class="col-8">
                   <h3 class="mb-0">My account</h3>
                 </div>
-                <div class="col-4 text-right">
-                  <a href="" class="btn btn-sm btn-primary">Save Changes</a>
-                </div>
+{#                <div class="col-4 text-right">#}
+{#                  <button type="submit" class="btn btn-sm btn-primary">Save Changes</button>#}
+{#                </div>#}
               </div>
             </div>
             <div class="card-body">
-              <form>
+              <form method="POST">
+                  {% csrf_token %}
+                  <button name="button" value="edit_info" style="margin-left: 920px" type="submit" class="btn btn-sm btn-primary">Save Changes</button>
                 <h6 class="heading-small text-muted mb-4">User information</h6>
                 <div class="pl-lg-4">
                   <div class="row">
                     <div class="col-lg-6">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-first-name">Username</label>
-                        <input type="text" id="input-username" class="form-control form-control-alternative" placeholder="Username" value="{{ current_user.name}}">
+                        <input type="text" id="input-username" class="form-control form-control-alternative" placeholder="Username" value="{{ request.user.email}} " disabled>
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-email">Email address</label>
-                        <input type="email" id="input-email" class="form-control form-control-alternative" placeholder="jesse@example.com" value="{{ current_user.email }}">
+                        <input type="email" id="input-email" class="form-control form-control-alternative" placeholder="jesse@example.com" value="{{ request.user.email}}" disabled>
                       </div>
                     </div>
                   </div>
@@ -112,57 +117,24 @@
                     <div class="col-lg-6">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-first-name">First name</label>
-                        <input type="text" id="input-first-name" class="form-control form-control-alternative" placeholder="First name" value="{{ current_user.fname }}">
+                        <input type="text" name="input-first-name" id="input-first-name" class="form-control form-control-alternative" placeholder="First name" value="{{ request.user.first_name }}">
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-last-name">Last name</label>
-                        <input type="text" id="input-last-name" class="form-control form-control-alternative" placeholder="Last name" value="{{ current_user.lname }}">
+                        <input type="text" name="input-last-name" id="input-last-name" class="form-control form-control-alternative" placeholder="Last name" value="{{ request.user.last_name }}">
                       </div>
                     </div>
                   </div>
                 </div>
                 <hr class="my-4">
-                <!-- Address -->
-{#                <h6 class="heading-small text-muted mb-4">Contact information</h6>#}
-{#                <div class="pl-lg-4">#}
-{#                  <div class="row">#}
-{#                    <div class="col-md-12">#}
-{#                      <div class="form-group focused">#}
-{#                        <label class="form-control-label" for="input-address">Address</label>#}
-{#                        <input id="input-address" class="form-control form-control-alternative" placeholder="Home Address" value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09" type="text">#}
-{#                      </div>#}
-{#                    </div>#}
-{#                  </div>#}
-{#                  <div class="row">#}
-{#                    <div class="col-lg-4">#}
-{#                      <div class="form-group focused">#}
-{#                        <label class="form-control-label" for="input-city">City</label>#}
-{#                        <input type="text" id="input-city" class="form-control form-control-alternative" placeholder="City" value="New York">#}
-{#                      </div>#}
-{#                    </div>#}
-{#                    <div class="col-lg-4">#}
-{#                      <div class="form-group focused">#}
-{#                        <label class="form-control-label" for="input-country">Country</label>#}
-{#                        <input type="text" id="input-country" class="form-control form-control-alternative" placeholder="Country" value="United States">#}
-{#                      </div>#}
-{#                    </div>#}
-{#                    <div class="col-lg-4">#}
-{#                      <div class="form-group">#}
-{#                        <label class="form-control-label" for="input-country">Postal code</label>#}
-{#                        <input type="number" id="input-postal-code" class="form-control form-control-alternative" placeholder="Postal code">#}
-{#                      </div>#}
-{#                    </div>#}
-{#                  </div>#}
-{#                </div>#}
-{#                <hr class="my-4">#}
                 <!-- Description -->
                 <h6 class="heading-small text-muted mb-4">About me</h6>
                 <div class="pl-lg-4">
                   <div class="form-group focused">
                     <label>About Me</label>
-                    <textarea rows="4" class="form-control form-control-alternative" placeholder="A few words about you ...">{{ current_user.bio }}</textarea>
+                      <textarea rows="4" name= "user-bio-input" class="form-control form-control-alternative" placeholder="A few words about you ...">{{ request.user.profile.user_bio }}</textarea>
                   </div>
                 </div>
               </form>
@@ -181,5 +153,20 @@
     </div>
   </footer>
 </body>
+
+
+
+<script>
+    const userDpInput = document.getElementById('upload');
+    const submitButton = document.getElementById('submit-button');
+
+    userDpInput.addEventListener('change', function() {
+      if (userDpInput.files.length > 0) {
+        submitButton.style.display = 'block';
+      } else {
+        submitButton.style.display = 'none';
+      }
+    });
+  </script>
 
 {% endblock %}
