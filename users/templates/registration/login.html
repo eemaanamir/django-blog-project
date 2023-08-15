@@ -55,7 +55,7 @@
             <input class="form__input" type="password" placeholder="Password" name="pass1" required>
             <input class="form__input" type="password" placeholder="Re-enter Password" name="pass2" required>
             <input class="form__input" type="text" placeholder="A Short Introduction" name="bio" required>
-            <button type ="submit" class="form__button button" name="button" value="sign_up">SIGN UP</button>
+            <button id="signup-button" type ="submit" class="form__button button" name="button" value="sign_up">SIGN UP</button>
         </form>
       </div>
       <div class="switch" id="switch-cnt">
@@ -76,3 +76,24 @@
     <script src="{% static "blogs/js/login.js" %}"></script>
   </body>
 </html>
+
+
+<script>
+    // Function to trigger the button click
+    function triggerButtonClick() {
+        var signUpButton = document.getElementById('signup-button');
+        signUpButton.click();
+    }
+
+    // AJAX request to your Django view
+    fetch('{% url 'signup' %}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.trigger_button_click) {
+                triggerButtonClick();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+</script>

@@ -47,4 +47,4 @@ class UserEditForm(forms.ModelForm):
 class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['user_bio', 'user_dp']
+        fields = ['user_bio']

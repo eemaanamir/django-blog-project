@@ -1,8 +1,8 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from .forms import UserLoginForm, UserSignupForm, ProfileSignupForm
+from .forms import UserLoginForm, UserSignupForm, ProfileSignupForm, UserEditForm, ProfileEditForm
 from .models import Profile
 
 blog_list = [
@@ -162,6 +162,10 @@ def signup_view(request):
         else:
             form_errors.update(user_form.errors)
             form_errors.update(profile_form.errors)
+            response_data = {
+                'trigger_button_click': True
+            }
+            return JsonResponse(response_data)
             return render(request, 'registration/login.html', {'form_errors': form_errors})
 
     return redirect('login')
@@ -169,12 +173,38 @@ def signup_view(request):
 
 def edit_profile_view(request):
     if request.method == "POST":
-        user = request.user
-        if request.POST.get('button') == 'edit_info':
-            user.first_name = request.POST.get("input-first-name")
-            user.last_name = request.POST.get("input-last-name")
-            user.profile.user_bio = request.POST.get("user-bio-input")
+        form_errors = {}
+        user_data = {
+            'first_name': request.POST.get('input-first-name'),
+            'last_name': request.POST.get('input-last-name'),
+        }
+        profile_data = {
+            'user_bio': request.POST.get('user-bio-input'),
+        }
+        user_form = UserEditForm(user_data, instance=request.user)
+        profile_form = ProfileEditForm(profile_data)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            profile = Profile.objects.get(user_id=user)
+            profile.user_bio = profile_form.cleaned_data['user_bio']
+            profile.save()
         else:
-            user.profile.user_dp = request.FILES['user_dp']
-        user.save()
+            form_errors.update(user_form.errors)
+            form_errors.update(profile_form.errors)
+            return render(request, 'users/edit_profile.html', {'form_errors': form_errors})
+
     return render(request, "users/edit_profile.html")
+
+
+def edit_dp_view(request):
+    if request.method == "POST":
+        user = request.user
+        if 'user_dp' in request.FILES:
+            user.profile.user_dp = request.FILES['user_dp']
+            user.save()
+        else:
+            messages = {"No File Was Selected!"}
+
+            return render(request, "users/edit_profile.html", {'messages': messages})
+
+    return redirect('edit_profile')

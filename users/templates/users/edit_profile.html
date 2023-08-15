@@ -4,6 +4,9 @@
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
 <link rel="stylesheet" href="{% static "blogs/edit_profile.css" %}">
 
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@1.5.0/dist/htmx.js"></script>
+
+
 <body>
   <div class="main-content">
     <!-- Top navbar -->
@@ -37,11 +40,12 @@
             </div>
             <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
               <div class="d-flex justify-content-between">
-                  <form method="POST">
+                  <form method="POST" enctype="multipart/form-data" action="{% url 'edit_dp' %}">
                       {% csrf_token %}
-                      <input name="user_dp" type="file" id="upload" hidden/>
-                        <label for="upload" class="btn btn-sm btn-info mr-4">Select Picture</label>
+                      <input name="user_dp" type="file" id="user_dp" hidden/>
+                        <label for="user_dp" class="btn btn-sm btn-info mr-4">Select Picture</label>
                       <br>
+                      <div id="messageContainer" style="font-size: 12px; width:150px"></div>
                       <button id="submit_button" name="button" value="picture_change" type="submit" class="btn btn-sm btn-info mr-4">Save Picture</button>
                   </form>
                   <div>
@@ -73,7 +77,7 @@
                     {{request.user.first_name}} {{ request.user.last_name }}
                 </h3>
                 <div class="h5 font-weight-300">
-                  <i class="ni location_pin mr-2"></i>{{ request.user.profile.user_type}}
+                  <i class="ni location_pin mr-2"></i>{{ request.user.profile.get_user_type_display}}
                 </div>
                 <hr class="my-4">
                 <p>{{ request.user.profile.user_bio }}</p>
@@ -94,7 +98,7 @@
               </div>
             </div>
             <div class="card-body">
-              <form method="POST">
+              <form method="POST" action="{% url 'edit_profile' %}">
                   {% csrf_token %}
                   <button name="button" value="edit_info" style="margin-left: 920px" type="submit" class="btn btn-sm btn-primary">Save Changes</button>
                 <h6 class="heading-small text-muted mb-4">User information</h6>
@@ -117,13 +121,13 @@
                     <div class="col-lg-6">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-first-name">First name</label>
-                        <input type="text" name="input-first-name" id="input-first-name" class="form-control form-control-alternative" placeholder="First name" value="{{ request.user.first_name }}">
+                        <input type="text" name="input-first-name" id="input-first-name" class="form-control form-control-alternative" placeholder="First name" value="{{ request.user.first_name }}" required>
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group focused">
                         <label class="form-control-label" for="input-last-name">Last name</label>
-                        <input type="text" name="input-last-name" id="input-last-name" class="form-control form-control-alternative" placeholder="Last name" value="{{ request.user.last_name }}">
+                        <input type="text" name="input-last-name" id="input-last-name" class="form-control form-control-alternative" placeholder="Last name" value="{{ request.user.last_name }}" required>
                       </div>
                     </div>
                   </div>
@@ -134,7 +138,7 @@
                 <div class="pl-lg-4">
                   <div class="form-group focused">
                     <label>About Me</label>
-                      <textarea rows="4" name= "user-bio-input" class="form-control form-control-alternative" placeholder="A few words about you ...">{{ request.user.profile.user_bio }}</textarea>
+                      <textarea rows="4" name= "user-bio-input" class="form-control form-control-alternative" placeholder="A few words about you ..." required>{{ request.user.profile.user_bio }}</textarea>
                   </div>
                 </div>
               </form>
@@ -157,16 +161,20 @@
 
 
 <script>
-    const userDpInput = document.getElementById('upload');
-    const submitButton = document.getElementById('submit-button');
+    document.addEventListener("DOMContentLoaded", function() {
+    const imageInput = document.getElementById("user_dp");
+    const messageContainer = document.getElementById("messageContainer");
 
-    userDpInput.addEventListener('change', function() {
-      if (userDpInput.files.length > 0) {
-        submitButton.style.display = 'block';
-      } else {
-        submitButton.style.display = 'none';
-      }
+    imageInput.addEventListener("change", function() {
+        if (imageInput.files && imageInput.files[0]) {
+            const selectedImage = imageInput.files[0];
+            messageContainer.innerHTML = `You've selected:\n ${selectedImage.name}`;
+        } else {
+            messageContainer.innerHTML = "";
+        }
     });
+});
+
   </script>
 
 {% endblock %}

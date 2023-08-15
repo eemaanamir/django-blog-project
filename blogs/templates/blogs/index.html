@@ -89,6 +89,34 @@
 		</div>
 	</nav>
 
+    {% if form_errors %}
+        <div style="background-color: #214252; width: 100%">
+			<div style="width: 500px; margin: 0 auto;" class="alert error">
+				<p class="inner">
+					{% for field, errors in form_errors.items %}
+                        <b><b>{{ field }}:</b></b>
+                        {% for error in errors %}
+                            <b>{{ error }}</b>
+                        {% endfor %}
+                    {% endfor %}
+				</p>
+			</div>
+        </div>
+
+    {% endif %}
+
+    {% if messages %}
+        <div style="background-color: #214252; width: 100%">
+			<div style="width: 500px; margin: 0 auto;" class="alert error">
+                {% for message in messages %}
+				<p class="inner" style="text-align: center">
+					<b><b>ERROR!</b></b>&nbsp;&nbsp;<b>{{message}}</b>
+                </p>
+                {% endfor %}
+			</div>
+        </div>
+    {% endif %}
+
 
     {% block content %}
 
