@@ -11,7 +11,7 @@
   <body>
     <div class="main">
       <div class="container a-container" id="a-container">
-          <form class="form" id="b-form" method="POST">
+          <form class="form" id="b-form" method="POST" action="{% url 'login' %}">
             {% csrf_token %}
           <h2 class="form_title title">Sign in to Website</h2>
           <div class="form__icons">
@@ -19,27 +19,42 @@
               <img class="form__icon" src="{% static "blogs/images/facebook_logo.png" %}">
           </div>
             <span class="form__span">or use your email account</span>
-          <input class="form__input" type="text" placeholder="Email" name="email">
-          <input class="form__input" type="password" placeholder="Password" name="password">
+          <input class="form__input" type="text" placeholder="Email" name="email" required>
+          <input class="form__input" type="password" placeholder="Password" name="password" required>
             <a class="form__link">Forgot your password?</a>
             <button type ="submit" class="form__button button" name="button" value="sign_in">SIGN IN</button>
         </form>
       </div>
       <div class="container b-container" id="b-container">
-        <form class="form" id="a-form" method="POST">
+        <form class="form" id="a-form" method="POST" action="{% url 'signup' %}">
             {% csrf_token %}
+            <div style="width: 500px; color: lightcoral">
+                {% if form_errors %}
+                    <h3 style="margin-left: 240px">ERROR!</h3>
+                    <h3>_______________________________________________________________________</h3>
+                            {% for field, errors in form_errors.items %}
+                                <p>
+                                {{ field }}:
+                                {% for error in errors %}
+                                {{ error }}
+                                {% endfor %}
+                                </p>
+                            {% endfor %}
+                    <h3>_______________________________________________________________________</h3>
+                {% endif %}
+            </div>
           <h2 class="form_title title">Create Account</h2>
           <div class="form__icons">
               <img class="form__icon" src="{% static "blogs/images/google-logo.png" %}">
               <img class="form__icon" src="{% static "blogs/images/facebook_logo.png" %}">
           </div>
             <span class="form__span">or use email for registration</span>
-            <input class="form__input" type="text" placeholder="First Name" name="f_name">
-            <input class="form__input" type="text" placeholder="Last Name" name="l_name">
-            <input class="form__input" type="text" placeholder="Email" name="new_email">
-            <input class="form__input" type="password" placeholder="Password" name="pass1">
-            <input class="form__input" type="password" placeholder="Re-enter Password" name="pass2">
-            <input class="form__input" type="text" placeholder="A Short Introduction" name="bio">
+            <input class="form__input" type="text" placeholder="First Name" name="f_name" required>
+            <input class="form__input" type="text" placeholder="Last Name" name="l_name" required>
+            <input class="form__input" type="text" placeholder="Email" name="new_email" required>
+            <input class="form__input" type="password" placeholder="Password" name="pass1" required>
+            <input class="form__input" type="password" placeholder="Re-enter Password" name="pass2" required>
+            <input class="form__input" type="text" placeholder="A Short Introduction" name="bio" required>
             <button type ="submit" class="form__button button" name="button" value="sign_up">SIGN UP</button>
         </form>
       </div>

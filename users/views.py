@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .forms import UserLoginForm, RegistrationForm, ProfileSignupForm
+from .forms import UserLoginForm, UserSignupForm, ProfileSignupForm
 from .models import Profile
 
 blog_list = [
@@ -116,58 +116,55 @@ def index_view(request):
 
 def login_view(request):
     if request.method == 'POST':
-        if request.POST.get('button') == 'sign_in':
-            data = {
-                'email': request.POST.get('email'),
-                'password': request.POST.get('password')
-            }
-            form = UserLoginForm(data)
-            if form.is_valid():
-                email = form.cleaned_data.get('email')
-                password = form.cleaned_data.get('password')
-                user = authenticate(username=email, password=password)
-                if user is not None:
-                    login(request, user)
-                    return redirect('home')
-                else:
-                    return HttpResponse("Incorrect User name or Password")
+        data = {
+            'email': request.POST.get('email'),
+            'password': request.POST.get('password')
+        }
+        form = UserLoginForm(data)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
             else:
-                return HttpResponse("Fill the complete form!") #add extactly which field is incomplete
-        else:
-            if request.POST.get('pass1') == request.POST.get('pass2'):
-                user_data = {
-                    'first_name': request.POST.get('f_name'),
-                    'last_name': request.POST.get('f_name'),
-                    'email': request.POST.get('new_email'),
-                    'password': request.POST.get('pass1'),
-                }
-                profile_data = {
-                    'user_bio': request.POST.get('bio'),
-                }
-                registration_form = RegistrationForm(user_data)
-                profile_form = ProfileSignupForm(profile_data)
-                if registration_form.is_valid() and profile_form.is_valid():
-                    email = registration_form.cleaned_data['email']
-                    if User.objects.filter(email=email).exists():
-                        return HttpResponse("email already taken!")
-                    else:
-                        user = registration_form.save(commit=False)
-                        user.set_password(registration_form.cleaned_data['password'])
-                        user.username = user.email
-                        user.save()
-
-                        # profile = profile_form.save(commit=False)
-                        profile = Profile.objects.get(user_id=user)
-                        profile.user = user
-                        profile.user_bio = profile_form.cleaned_data['user_bio']
-                        profile.save()
-
-                        login(request, user)
-                        return redirect('home')
-            else:
-                return HttpResponse("Passwords dont match!")
+                return render(request, 'registration/login.html', {'form_errors': form.errors})
 
     return render(request, 'registration/login.html')
+
+
+def signup_view(request):
+    form_errors = {}
+    if request.method == 'POST':
+        user_data = {
+            'first_name': request.POST.get('f_name'),
+            'last_name': request.POST.get('l_name'),
+            'email': request.POST.get('new_email'),
+            'password1': request.POST.get('pass1'),
+            'password2': request.POST.get('pass2'),
+        }
+        profile_data = {
+            'user_bio': request.POST.get('bio'),
+        }
+        user_form = UserSignupForm(user_data)
+        profile_form = ProfileSignupForm(profile_data)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+
+            profile = Profile.objects.get(user_id=user)
+            profile.user = user
+            profile.user_bio = profile_form.cleaned_data['user_bio']
+            profile.save()
+
+            login(request, user)
+            return redirect('home')
+        else:
+            form_errors.update(user_form.errors)
+            form_errors.update(profile_form.errors)
+            return render(request, 'registration/login.html', {'form_errors': form_errors})
+
+    return redirect('login')
 
 
 def edit_profile_view(request):
@@ -181,5 +178,3 @@ def edit_profile_view(request):
             user.profile.user_dp = request.FILES['user_dp']
         user.save()
     return render(request, "users/edit_profile.html")
-
-
