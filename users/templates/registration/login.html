@@ -13,6 +13,21 @@
       <div class="container a-container" id="a-container">
           <form class="form" id="b-form" method="POST" action="{% url 'login' %}">
             {% csrf_token %}
+              <div style="width: 500px; color: lightcoral">
+                {% if login_form_errors %}
+                    <h3 style="margin-left: 240px">ERROR!</h3>
+                    <h3>_______________________________________________________________________</h3>
+                            {% for field, errors in login_form_errors.items %}
+                                <p>
+                                {{ field }}:
+                                {% for error in errors %}
+                                {{ error }}
+                                {% endfor %}
+                                </p>
+                            {% endfor %}
+                    <h3>_______________________________________________________________________</h3>
+                {% endif %}
+            </div>
           <h2 class="form_title title">Sign in to Website</h2>
           <div class="form__icons">
               <img class="form__icon" src="{% static "blogs/images/google-logo.png" %}">
@@ -29,10 +44,10 @@
         <form class="form" id="a-form" method="POST" action="{% url 'signup' %}">
             {% csrf_token %}
             <div style="width: 500px; color: lightcoral">
-                {% if form_errors %}
+                {% if signup_form_errors %}
                     <h3 style="margin-left: 240px">ERROR!</h3>
                     <h3>_______________________________________________________________________</h3>
-                            {% for field, errors in form_errors.items %}
+                            {% for field, errors in signup_form_errors.items %}
                                 <p>
                                 {{ field }}:
                                 {% for error in errors %}
@@ -77,23 +92,3 @@
   </body>
 </html>
 
-
-<script>
-    // Function to trigger the button click
-    function triggerButtonClick() {
-        var signUpButton = document.getElementById('signup-button');
-        signUpButton.click();
-    }
-
-    // AJAX request to your Django view
-    fetch('{% url 'signup' %}')
-        .then(response => response.json())
-        .then(data => {
-            if (data.trigger_button_click) {
-                triggerButtonClick();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-</script>

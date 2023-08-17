@@ -11,6 +11,12 @@ class UserLoginForm(forms.ModelForm):
 
 
 class UserSignupForm(UserCreationForm):
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
+    email = forms.EmailField(required=True)
+    password1 = forms.CharField(required=True, widget=forms.PasswordInput)
+    password2 = forms.CharField(required=True, widget=forms.PasswordInput)
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'password1', 'password2']
@@ -39,12 +45,17 @@ class ProfileSignupForm(forms.ModelForm):
 
 
 class UserEditForm(forms.ModelForm):
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name']
 
 
 class ProfileEditForm(forms.ModelForm):
+    user_bio = forms.CharField(max_length=200, widget=forms.Textarea(attrs={'maxlength': '200'}))
+
     class Meta:
         model = Profile
         fields = ['user_bio']

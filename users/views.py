@@ -129,7 +129,9 @@ def login_view(request):
                 login(request, user)
                 return redirect('home')
             else:
-                return render(request, 'registration/login.html', {'form_errors': form.errors})
+                return render(request,'registration/login.html',{'login_form_errors': {'Error while logging in: Invalid Credentials!'}})
+        else:
+            return render(request, 'registration/login.html', {'login_form_errors': form.errors})
 
     return render(request, 'registration/login.html')
 
@@ -162,11 +164,7 @@ def signup_view(request):
         else:
             form_errors.update(user_form.errors)
             form_errors.update(profile_form.errors)
-            response_data = {
-                'trigger_button_click': True
-            }
-            return JsonResponse(response_data)
-            return render(request, 'registration/login.html', {'form_errors': form_errors})
+            return render(request, 'registration/login.html', {'signup_form_errors': form_errors})
 
     return redirect('login')
 
