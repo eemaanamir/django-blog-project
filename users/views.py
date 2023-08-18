@@ -129,7 +129,7 @@ def login_view(request):
                 login(request, user)
                 return redirect('home')
             else:
-                return render(request,'registration/login.html',{'login_form_errors': {'Error while logging in: Invalid Credentials!'}})
+                return render(request,'registration/login.html', {'login_form_errors': {'Error while logging in: Invalid Credentials!'}})
         else:
             return render(request, 'registration/login.html', {'login_form_errors': form.errors})
 
@@ -186,6 +186,7 @@ def edit_profile_view(request):
             profile = Profile.objects.get(user_id=user)
             profile.user_bio = profile_form.cleaned_data['user_bio']
             profile.save()
+            return redirect('edit_profile')
         else:
             form_errors.update(user_form.errors)
             form_errors.update(profile_form.errors)
