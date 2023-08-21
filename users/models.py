@@ -1,4 +1,7 @@
-import os
+"""
+User Model Module
+This module contains the model definitions and associated signals.
+"""
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -6,6 +9,9 @@ from django.dispatch import receiver
 
 
 class Profile(models.Model):
+    """
+    User profile model containing additional information about the user.
+    """
     USER_TYPE_CHOICES = (
         ('basic', 'Basic User'),
         ('premium', 'Premium User'),
@@ -20,14 +26,23 @@ class Profile(models.Model):
     likes = models.IntegerField(default=0)
     followers = models.IntegerField(default=0)
 
+    # pylint: disable=no-member
     def __str__(self):
         return self.user.username
 
+    # pylint: disable=no-self-argument
     @receiver(post_save, sender=User)
-    def create_user_profile(sender, instance, created, **kwargs):
+    def create_user_profile(sender, instance, created, **kwargs):   # pylint: disable=unused-argument
+        """
+        Signal handler to create a user profile when a new user is created.
+        """
         if created:
             Profile.objects.create(user=instance)
 
+    # pylint: disable=no-self-argument
     @receiver(post_save, sender=User)
-    def save_user_profile(sender, instance, **kwargs):
+    def save_user_profile(sender, instance, **kwargs):  # pylint: disable=unused-argument
+        """
+        Signal handler to save the user profile when the user is saved.
+        """
         instance.profile.save()
