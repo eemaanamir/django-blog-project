@@ -3,6 +3,7 @@ Blog Views Module
 This module contains view functions for blog-related actions.
 """
 from django.shortcuts import render
+from .models import Blog
 
 blog_list = [
         {
@@ -198,5 +199,13 @@ def list_drafts_and_published(request, list_type):
     """
     list_drafts_and_published
     """
+    user = request.user
+    if list_type == 'drafts':
+        blogs_list = Blog.objects.filter(user_id=user, is_published=False).order_by('-blog_date_time')[:10]
+        list_heading = 'Draft Blogs'
+    else:
+        blogs_list = Blog.objects.filter(user_id=user, is_published=True).order_by('-blog_date_time')[:10]
+        list_heading = 'Published Blogs'
+
     return render(request, "blogs/my_drafts_and_published_list.html",
-                  {"current_user": author, "blog_list": blog_list, "list_heading": list_type.upper})
+                  {"current_user": author, "blog_list": blogs_list, "list_heading": list_heading})
