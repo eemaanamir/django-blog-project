@@ -1,15 +1,20 @@
+"""
+Module: users_api.views
+Description: This module defines API views for user-related functionalities in the Users API app.
+"""
 from rest_framework.generics import (
-    RetrieveDestroyAPIView,
-    ListAPIView,
     RetrieveUpdateAPIView,
     RetrieveAPIView,
     CreateAPIView,
 )
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_405_METHOD_NOT_ALLOWED
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from users.models import User
+from blogs.api.permissions import IsCurrentUser
 
 from .serializers import (
     UserCreateSerializer,
@@ -18,20 +23,30 @@ from .serializers import (
     UserDetailUpdateSerializer,
 )
 
-from users.models import User
-from blogs.api.permissions import *
-
 
 class UserCreateAPIView(CreateAPIView):
+    """
+    API view for user registration.
+
+    This view uses the UserCreateSerializer to handle user registration.
+    """
     serializer_class = UserCreateSerializer
     queryset = User.objects.all()
 
 
 class UserLoginAPIView(CreateAPIView):
+    """
+    API view for user login.
+
+    This view uses the UserLoginSerializer to handle user login.
+    """
     permission_classes = [AllowAny]
     serializer_class = UserLoginSerializer
 
     def post(self, request, *args, **kwargs):
+        """
+        Handle user login.
+        """
         data = request.data
         serializer = UserLoginSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
@@ -41,8 +56,17 @@ class UserLoginAPIView(CreateAPIView):
 
 
 class UserLogoutAPIView(APIView):
+    """
+    API view for user logout.
 
+    This view logs out the user by deleting the JWT token cookie.
+    """
+
+    # pylint: disable=unused-argument
     def post(self, request):
+        """
+        Handle user logout.
+        """
         response = Response()
         response.delete_cookie('jwt')
         response.data = {
@@ -52,19 +76,32 @@ class UserLogoutAPIView(APIView):
 
 
 class UserDetailAPIView(RetrieveAPIView):
+    """
+    API view for retrieving user profile details.
+
+    This view retrieves detailed information about a user's profile.
+    """
     queryset = User.objects.all()
     serializer_class = UserDetailSerializer
-    # authentication_classes = [JWTAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
 
 class UserDetailUpdateAPIView(RetrieveUpdateAPIView):
+    """
+    API view for updating user profile details.
+
+    This view allows a user to update their profile information.
+    """
     queryset = User.objects.all()
     serializer_class = UserDetailUpdateSerializer
-    # authentication_classes = [JWTAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsCurrentUser]
 
     def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieve user profile details.
+        """
         try:
             instance = self.get_object()
         except self.queryset.model.DoesNotExist:
@@ -72,32 +109,3 @@ class UserDetailUpdateAPIView(RetrieveUpdateAPIView):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
-
-
-"""
-curl \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"username": "123@123.com", "password": "onetwothree"}' \
-  http://localhost:8000/api/token/
-
-
-curl -H "Authorization: Bearer <access-token>
-" http://127.0.0.1:8000/api/users/4/profile/
-
-
-curl \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"refresh":"<refresh-token>"}' \
-  http://localhost:8000/api/token/refresh/
-  
-  
-curl \
-  -X PUT \
-  -H "Content-Type: application/json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjkzMzMxMzAyLCJpYXQiOjE2OTMzMjY3MzAsImp0aSI6IjA0ZDM4YmE4MTYwMzRjZTFhNDRhNGJjNDUyMzRlN2MwIiwidXNlcl9pZCI6NH0.VN4yqkTX-Imc02C4RGm3xH84nucf18yO1_NjkD5v1YY
-  "\
-  -d '{"blog_title":"new","blog_type":"basic","blog_topic":"none","blog_summary":"new","blog_content":"new","is_published":"True"}' \
-  http://localhost:8000/api/blogs/8/edit/
-
-"""

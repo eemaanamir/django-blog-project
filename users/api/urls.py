@@ -1,7 +1,17 @@
+"""
+Module: users_api.urls
+Description: This module defines the URL patterns for the Users API app.
+"""
 from django.urls import path
-from . views import *
+from . views import (
+    UserCreateAPIView,
+    UserLoginAPIView,
+    UserLogoutAPIView,
+    UserDetailAPIView,
+    UserDetailUpdateAPIView,
+)
 
-
+# pylint: disable=invalid-name
 app_name = 'users-api'
 
 urlpatterns = [
