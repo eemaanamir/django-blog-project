@@ -47,3 +47,5 @@ class Command(BaseCommand):
                 task.send_mail_task.delay(user.id)
                 self.stdout.write(f'Sending welcome email to '
                                   f'{user.username} with id {user.id}!')
+
+

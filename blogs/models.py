@@ -39,8 +39,7 @@ class Blog(models.Model):
     is_published = models.BooleanField(default=False)
     blog_date_time = models.DateTimeField(auto_now=True)
     blog_likes_count = models.IntegerField(default=0)
-    blog_header_image = models.ImageField(upload_to='blog_headers/', default='blog_headers/hero_1.jpg')
+    blog_header_image = models.ImageField(upload_to='blog_headers/', default='blog_headers/default_header.jpg')
 
     def __str__(self):
         return self.blog_title + ' by ' + self.user.username
-

@@ -35,7 +35,7 @@ class BlogTimeLineListAPIView(ListAPIView):
     serializer_class = BlogListSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    pagination_class = BlogPageNumberPagination
+    # pagination_class = BlogPageNumberPagination
     filter_backends = [OrderingFilter, SearchFilter]
     ordering_fields = ['blog_date_time', 'blog_likes_count']
     search_fields = ['blog_title', 'blog_type', 'blog_topic', 'blog_summary',
@@ -73,7 +73,6 @@ class BlogDraftListAPIView(ListAPIView):
     serializer_class = BlogDraftListSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
-    pagination_class = BlogPageNumberPagination
 
     def get_queryset(self):
         """
@@ -141,7 +140,6 @@ class BlogPublishedListAPIView(ListAPIView):
     serializer_class = BlogPublishedListSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsOwner]
-    pagination_class = BlogPageNumberPagination
 
     def get_queryset(self):
         """

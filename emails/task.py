@@ -30,11 +30,17 @@ def send_mail_task(user_id):
     """
     user = User.objects.get(pk=user_id)
     name = str(user.first_name).upper() + ' ' + str(user.last_name).upper()
+    otp = str(user.profile.user_otp)
     send_mail('Welcome To Blogy!',
               'WELCOME ' + name +
               '!\n\nThankyou for creating an account with us. '
-              'We look forward to working with you.\n\nRegards,\nTeam Blogy',
+              '\nYour OTP is: ' + otp +
+              '\n\nRegards,\nTeam Blogy',
               'eemaan.amir@gmail.com', ['eemaan.amir@gmail.com'], fail_silently=False)
     return None
 
 # RUN CELERY: python3 -m celery -A djangoproject worker -l info -P eventlet -E
+
+# to run:
+# command1: redis-server
+# command2: celery -A djangoproject worker -l INFO

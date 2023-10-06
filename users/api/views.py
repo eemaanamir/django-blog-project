@@ -13,7 +13,7 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NO
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from users.models import User
+from users.models import User, Profile
 from blogs.api.permissions import IsCurrentUser
 
 from .serializers import (
@@ -21,6 +21,7 @@ from .serializers import (
     UserLoginSerializer,
     UserDetailSerializer,
     UserDetailUpdateSerializer,
+    VerificationSerializer,
 )
 
 
@@ -109,3 +110,27 @@ class UserDetailUpdateAPIView(RetrieveUpdateAPIView):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class VerifyOTP(APIView):
+
+    permission_classes = [AllowAny]
+
+    def put(self, request):
+        serializer = VerificationSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            otp = serializer.validated_data['otp']
+
+            try:
+                profile = Profile.objects.get(user__username=username, user_otp=otp, is_verified=False)
+                profile.is_verified = True
+                profile.save()
+                return Response({"message": "OTP verified successfully."}, status=HTTP_200_OK)
+            except Profile.DoesNotExist:
+                error_message = "Invalid OTP."
+                if not Profile.objects.filter(user__username=username).exists():
+                    error_message = "User not found."
+                return Response({"error": error_message}, status=HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)

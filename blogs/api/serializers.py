@@ -12,6 +12,7 @@ from rest_framework.serializers import (
     HyperlinkedIdentityField
 )
 from blogs.models import Blog
+from users.api.serializers import UserDetailSerializer
 
 
 class BlogListSerializer(ModelSerializer):
@@ -24,6 +25,7 @@ class BlogListSerializer(ModelSerializer):
     )
     user_detail_url = SerializerMethodField()
     user = SerializerMethodField()
+    blog_header_image = SerializerMethodField()
 
     # pylint: disable=too-few-public-methods
     class Meta:
@@ -34,6 +36,8 @@ class BlogListSerializer(ModelSerializer):
         fields = [
             'user',
             'user_detail_url',
+            'id',
+            'blog_header_image',
             'blog_title',
             'blog_type',
             'blog_topic',
@@ -67,12 +71,24 @@ class BlogListSerializer(ModelSerializer):
             )
         return None
 
+    def get_blog_header_image(self, obj):
+        """
+        Get the blog header image URL.
+        Args:
+            obj (Blog): The blog post instance.
+        Returns:
+            str: The blog header image URL.
+        """
+        return obj.blog_header_image.url
+
 
 class BlogDetailSerializer(ModelSerializer):
     """
     Serializer for detailed view of a single blog post.
     """
     user_detail_url = SerializerMethodField()
+    blog_header_image = SerializerMethodField()
+    user = UserDetailSerializer(read_only=True)
 
     # pylint: disable=too-few-public-methods
     class Meta:
@@ -108,6 +124,15 @@ class BlogDetailSerializer(ModelSerializer):
                 reverse('users-api:profile', args=[user_instance.pk])
             )
         return None
+    def get_blog_header_image(self, obj):
+        """
+        Get the blog header image URL.
+        Args:
+            obj (Blog): The blog post instance.
+        Returns:
+            str: The blog header image URL.
+        """
+        return obj.blog_header_image.url
 
 
 class BlogDraftListSerializer(ModelSerializer):
@@ -132,13 +157,15 @@ class BlogDraftListSerializer(ModelSerializer):
         model = Blog
         fields = [
             'user',
+            'id',
             'blog_title',
             'blog_type',
             'blog_topic',
             'blog_summary',
             'blog_date_time',
+            'blog_header_image',
             'edit_url',
-            'delete_url'
+            'delete_url',
         ]
 
     def get_user(self, obj):
@@ -178,11 +205,13 @@ class BlogPublishedListSerializer(ModelSerializer):
         model = Blog
         fields = [
             'user',
+            'id',
             'blog_title',
             'blog_type',
             'blog_topic',
             'blog_summary',
             'blog_date_time',
+            'blog_header_image',
             'detail_url',
             'edit_url',
             'delete_url'
@@ -225,4 +254,8 @@ class BlogDraftCreateUpdateSerializer(ModelSerializer):
             'blog_summary',
             'blog_content',
             'is_published',
+            'id',
         ]
+        extra_kwargs = {
+            "id": {"read_only": True}}
+

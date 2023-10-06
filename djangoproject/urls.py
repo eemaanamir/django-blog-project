@@ -32,6 +32,7 @@ urlpatterns = [
     path("blogs/", include("blogs.urls")),
     path("api/blogs/", include("blogs.api.urls"), name='blog-api'),
     path("api/users/", include("users.api.urls"), name='users-api'),
+    path("api/subscription-plans/", include("subscriptions.urls"), name='subscriptions-api'),
     path("admin/", admin.site.urls),
 
     path("api-docs/", schema_view),
