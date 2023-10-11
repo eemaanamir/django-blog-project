@@ -1,0 +1,131 @@
+{% extends "blogs/index.html" %}
+{% load static %}
+{% block content %}
+
+	<div class="section search-result-wrap">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<div class="heading">{{ list_heading }}</div>
+				</div>
+			</div>
+			<div class="row posts-entry">
+				<div class="col-lg-8">
+
+                    {% if blog_list %}
+                        <ul>
+                        {% for blog in blog_list %}
+                            <div class="blog-entry d-flex blog-entry-search-item">
+						<a href="single.html" class="img-link me-4">
+							<img src="{% get_static_prefix %}blogs/images/{{blog.headerimage}}" alt="Image" class="img-fluid" style="width: 300px; height: 200px; object-fit: cover;">
+						</a>
+						<div>
+							<span class="date">{{blog.date}} &bullet; <a href="#">{{blog.topic}}</a></span>
+							<h2><a href="single.html">{{ blog.heading }}</a></h2>
+							<p>{{ blog.description }}</p>
+							<p><a href="single.html" class="btn btn-sm btn-outline-primary">Read More</a></p>
+						</div>
+					</div>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No blogs are available.</p>
+                    {% endif %}
+
+
+{#					<div class="row text-start pt-5 border-top">#}
+{#						<div class="col-md-12">#}
+{#							<div class="custom-pagination">#}
+{#								<span>1</span>#}
+{#								<a href="#">2</a>#}
+{#								<a href="#">3</a>#}
+{#								<a href="#">4</a>#}
+{#								<span>...</span>#}
+{#								<a href="#">15</a>#}
+{#							</div>#}
+{#						</div>#}
+{#					</div>#}
+
+				</div>
+
+				<div class="col-lg-4 sidebar">
+                <nav class="site-nav" style="background: transparent;">
+                            <div class="site-navigation">
+                                <ul class="js-clone-nav d-none d-lg-inline-block text-start site-menu mx-auto">
+                                    <li class="has-children">
+                                        <a style="color: #0a3139; font-size: 20px; content: '\f0b0';">Filter</a>
+                                        <ul class="dropdown">
+                                            <li><a href="">Most Liked</a></li>
+                                            <li><a href="">Most Recent</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                </nav>
+
+					<div class="sidebar-box search-form-wrap mb-4">
+						<form action="#" class="sidebar-search-form">
+							<span class="bi-search"></span>
+							<input type="text" class="form-control" id="s" placeholder="Type a keyword and hit enter">
+						</form>
+					</div>
+					<!-- END sidebar-box -->
+					<div class="sidebar-box">
+						<h3 class="heading">Featured Blogs</h3>
+                        <div class="post-entry-sidebar">
+                          <ul>
+                                    {% for blog in featured_blog_list %}
+                                        <li>
+                                          <a href="">
+                                            <img src="{% get_static_prefix %}blogs/images/{{blog.headerimage}}" alt="Image placeholder" class="me-4 rounded">
+                                            <div class="text">
+                                              <h4>{{ blog.heading}}</h4>
+                                              <div class="post-meta">
+                                                <span class="mr-2">{{ blog.date }} </span>
+                                              </div>
+                                            </div>
+                                          </a>
+                                        </li>
+                                    {% endfor %}
+                          </ul>
+                        </div>
+					</div>
+					<!-- END sidebar-box -->
+
+					<div class="sidebar-box">
+						<h3 class="heading">Categories</h3>
+						<ul class="categories">
+							<li><a href="#">Food <span>(12)</span></a></li>
+							<li><a href="#">Travel <span>(22)</span></a></li>
+							<li><a href="#">Lifestyle <span>(37)</span></a></li>
+							<li><a href="#">Business <span>(42)</span></a></li>
+							<li><a href="#">Adventure <span>(14)</span></a></li>
+						</ul>
+					</div>
+					<!-- END sidebar-box -->
+
+					<div class="sidebar-box">
+						<h3 class="heading">Tags</h3>
+						<ul class="tags">
+							<li><a href="#">Travel</a></li>
+							<li><a href="#">Adventure</a></li>
+							<li><a href="#">Food</a></li>
+							<li><a href="#">Lifestyle</a></li>
+							<li><a href="#">Business</a></li>
+							<li><a href="#">Freelancing</a></li>
+							<li><a href="#">Travel</a></li>
+							<li><a href="#">Adventure</a></li>
+							<li><a href="#">Food</a></li>
+							<li><a href="#">Lifestyle</a></li>
+							<li><a href="#">Business</a></li>
+							<li><a href="#">Freelancing</a></li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+{% endblock %}
