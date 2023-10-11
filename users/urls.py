@@ -1,5 +1,8 @@
+"""
+Users App URLs
+This module defines the URL patterns for the user-related views in the Django project.
+"""
 from django.urls import path
-
 from . import views
 
 urlpatterns = [
