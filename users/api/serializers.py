@@ -1,5 +1,7 @@
-import datetime
-import jwt
+"""
+Module: users_api.serializers
+Description: This module defines serializers for user-related functionalities in the Users API app.
+"""
 from django.core.validators import MaxLengthValidator
 from rest_framework import serializers
 from rest_framework.response import Response
@@ -7,15 +9,22 @@ from rest_framework.serializers import (
     ModelSerializer,
     ValidationError
 )
-
-from users.models import User, Profile
 from rest_framework_simplejwt.tokens import RefreshToken
+from users.models import User, Profile
 
 
 class UserCreateSerializer(ModelSerializer):
-    first_name = serializers.CharField(required=True, validators=[MaxLengthValidator(limit_value=150)])
-    last_name = serializers.CharField(required=True, validators=[MaxLengthValidator(limit_value=150)])
-    email = serializers.EmailField(required=True, validators=[MaxLengthValidator(limit_value=150)])
+    """
+    Serializer for user registration.
+
+    This serializer handles the validation and creation of new user accounts.
+    """
+    first_name = serializers.CharField(required=True,
+                                       validators=[MaxLengthValidator(limit_value=150)])
+    last_name = serializers.CharField(required=True,
+                                      validators=[MaxLengthValidator(limit_value=150)])
+    email = serializers.EmailField(required=True,
+                                   validators=[MaxLengthValidator(limit_value=150)])
     password1 = serializers.CharField(write_only=True, label='Password',
                                       validators=[MaxLengthValidator(limit_value=150)])
     password2 = serializers.CharField(write_only=True, label='Confirm Password',
@@ -23,13 +32,22 @@ class UserCreateSerializer(ModelSerializer):
     user_bio = serializers.CharField(required=True, label='User Bio',
                                      validators=[MaxLengthValidator(limit_value=200)])
 
+    # pylint: disable=too-few-public-methods
     class Meta:
+        """
+        Metaclass specifies the model and fields to include in the serializer.
+        """
         model = User
         fields = [
             'first_name', 'last_name', 'email', 'password1', 'password2', 'user_bio'
         ]
 
     def validate_password2(self, value):
+        """
+        Validate that the provided passwords match.
+
+        This function ensures that the 'password1' and 'password2' fields match.
+        """
         data = self.get_initial()
         password1 = data.get("password1")
         password2 = value
@@ -38,12 +56,22 @@ class UserCreateSerializer(ModelSerializer):
         return value
 
     def validate_email(self, value):
+        """
+        Validate that the provided email is unique.
+
+        This function checks if the provided email is already in use by another user.
+        """
         if User.objects.filter(email=value).exists():
             raise ValidationError("This email is already in use."
                                   " Please use a different email.")
         return value
 
     def create(self, validated_data):
+        """
+        Create a new user account.
+
+        This function creates a new User instance and associated Profile instance.
+        """
         first_name = validated_data['first_name']
         last_name = validated_data['last_name']
         email = validated_data['email']
@@ -66,11 +94,20 @@ class UserCreateSerializer(ModelSerializer):
 
 
 class UserLoginSerializer(ModelSerializer):
+    """
+    Serializer for user login.
+
+    This serializer handles user login and generates JWT tokens.
+    """
     token = serializers.CharField(allow_blank=True, read_only=True)
     refresh = serializers.CharField(allow_blank=True, read_only=True)
     email = serializers.EmailField(label='Email Address', required=True)
 
+    # pylint: disable=too-few-public-methods
     class Meta:
+        """
+        Metaclass specifies the model and fields to include in the serializer.
+        """
         model = User
         fields = [
             "email",
@@ -81,7 +118,13 @@ class UserLoginSerializer(ModelSerializer):
         extra_kwargs = {"password":
                             {"write_only": True}}
 
-    def validate(self, data):
+    def validate(self, data):  # pylint: disable=arguments-renamed
+        """
+        Validate user login credentials and generate JWT tokens.
+
+        This function validates the provided email and password, generates JWT tokens,
+        and sets an HTTP-only cookie containing the token.
+        """
         email = data["email"]
         password = data["password"]
         user = User.objects.filter(username=email)
@@ -106,7 +149,17 @@ class UserLoginSerializer(ModelSerializer):
 
 
 class ProfileDetailSerializer(ModelSerializer):
+    """
+    Serializer for Profile model to retrieve details.
+
+    This serializer retrieves details about a user's profile.
+    """
+
+    # pylint: disable=too-few-public-methods
     class Meta:
+        """
+        Metaclass specifies the model and fields to include in the serializer.
+        """
         model = Profile
         fields = [
             'user_bio',
@@ -120,9 +173,18 @@ class ProfileDetailSerializer(ModelSerializer):
 
 
 class UserDetailSerializer(ModelSerializer):
+    """
+    Serializer for User model to retrieve details.
+
+    This serializer retrieves details about a user.
+    """
     profile = ProfileDetailSerializer()
 
+    # pylint: disable=too-few-public-methods
     class Meta:
+        """
+        Metaclass specifies the model and fields to include in the serializer.
+        """
         model = User
         fields = [
             'id',
@@ -135,7 +197,19 @@ class UserDetailSerializer(ModelSerializer):
 
 
 class ProfileDetailUpdateSerializer(ModelSerializer):
+    """
+    Serializer for updating user profile details.
+
+    This serializer handles updating user profile details.
+    """
+    user_bio = serializers.CharField(required=True, label='User Bio',
+                                     validators=[MaxLengthValidator(limit_value=200)])
+
+    # pylint: disable=too-few-public-methods
     class Meta:
+        """
+        Metaclass specifies the model and fields to include in the serializer.
+        """
         model = Profile
         fields = [
             'user_bio',
@@ -156,9 +230,22 @@ class ProfileDetailUpdateSerializer(ModelSerializer):
 
 
 class UserDetailUpdateSerializer(ModelSerializer):
+    """
+    Serializer for updating user details.
+
+    This serializer handles updating user details, including their profile information.
+    """
+    first_name = serializers.CharField(required=True,
+                                       validators=[MaxLengthValidator(limit_value=150)])
+    last_name = serializers.CharField(required=True,
+                                      validators=[MaxLengthValidator(limit_value=150)])
     profile = ProfileDetailUpdateSerializer()
 
+    # pylint: disable=too-few-public-methods
     class Meta:
+        """
+        Metaclass specifies the model and fields to include in the serializer.
+        """
         model = User
         fields = [
             'id',
@@ -173,3 +260,12 @@ class UserDetailUpdateSerializer(ModelSerializer):
             "username": {"read_only": True},
             "email": {"read_only": True}
         }
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile')
+        profile_serializer = ProfileDetailUpdateSerializer(instance.profile,
+                                                           data=profile_data, partial=True)
+        if profile_serializer.is_valid():
+            profile_serializer.save()
+
+        return super().update(instance, validated_data)
