@@ -2,6 +2,9 @@
 Module: users_api.serializers
 Description: This module defines serializers for user-related functionalities in the Users API app.
 """
+import os
+import numpy as np
+
 from django.core.validators import MaxLengthValidator
 from rest_framework import serializers
 from rest_framework.response import Response
@@ -10,6 +13,8 @@ from rest_framework.serializers import (
     ValidationError
 )
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from emails import task
 from users.models import User, Profile
 
 
@@ -88,64 +93,12 @@ class UserCreateSerializer(ModelSerializer):
 
         profile = Profile.objects.get(user=user_obj)
         profile.user_bio = validated_data['user_bio']
+        profile.user_otp = np.random.randint(100000, 999999)
         profile.save()
 
+        task.send_mail_task.delay(user_obj.id)
+
         return validated_data
-
-
-class UserLoginSerializer(ModelSerializer):
-    """
-    Serializer for user login.
-
-    This serializer handles user login and generates JWT tokens.
-    """
-    token = serializers.CharField(allow_blank=True, read_only=True)
-    refresh = serializers.CharField(allow_blank=True, read_only=True)
-    email = serializers.EmailField(label='Email Address', required=True)
-
-    # pylint: disable=too-few-public-methods
-    class Meta:
-        """
-        Metaclass specifies the model and fields to include in the serializer.
-        """
-        model = User
-        fields = [
-            "email",
-            'password',
-            "token",
-            "refresh"
-        ]
-        extra_kwargs = {"password":
-                            {"write_only": True}}
-
-    def validate(self, data):  # pylint: disable=arguments-renamed
-        """
-        Validate user login credentials and generate JWT tokens.
-
-        This function validates the provided email and password, generates JWT tokens,
-        and sets an HTTP-only cookie containing the token.
-        """
-        email = data["email"]
-        password = data["password"]
-        user = User.objects.filter(username=email)
-        if user.exists():
-            user_obj = user.first()
-        else:
-            raise ValidationError("This Email is not valid.")
-
-        if user_obj:
-            if not user_obj.check_password(password):
-                raise ValidationError("Incorrect credentials please try again.")
-
-        refresh = RefreshToken.for_user(user_obj)
-        token = str(refresh.access_token)
-        response = Response()
-        response.set_cookie(key='jwt', value=token, httponly=True)
-
-        data["token"] = token
-        data["refresh"] = refresh
-
-        return data
 
 
 class ProfileDetailSerializer(ModelSerializer):
@@ -196,6 +149,65 @@ class UserDetailSerializer(ModelSerializer):
         ]
 
 
+class UserLoginSerializer(ModelSerializer):
+    """
+    Serializer for user login.
+
+    This serializer handles user login and generates JWT tokens.
+    """
+    token = serializers.CharField(allow_blank=True, read_only=True)
+    refresh = serializers.CharField(allow_blank=True, read_only=True)
+    email = serializers.EmailField(label='Email Address', required=True)
+    user = UserDetailSerializer(read_only=True)
+
+    # pylint: disable=too-few-public-methods
+    class Meta:
+        """
+        Metaclass specifies the model and fields to include in the serializer.
+        """
+        model = User
+        fields = [
+            "user",
+            "email",
+            'password',
+            "token",
+            "refresh"
+        ]
+        extra_kwargs = {"password":
+                            {"write_only": True},
+                        }
+
+    def validate(self, data):  # pylint: disable=arguments-renamed
+        """
+        Validate user login credentials and generate JWT tokens.
+
+        This function validates the provided email and password, generates JWT tokens,
+        and sets an HTTP-only cookie containing the token.
+        """
+        email = data["email"]
+        password = data["password"]
+        user = User.objects.filter(username=email)
+        if user.exists():
+            user_obj = user.first()
+        else:
+            raise ValidationError("This Email is not valid.")
+
+        if user_obj:
+            if not user_obj.check_password(password):
+                raise ValidationError("Incorrect credentials please try again.")
+
+        refresh = RefreshToken.for_user(user_obj)
+        token = str(refresh.access_token)
+        response = Response()
+        response.set_cookie(key='jwt', value=token, httponly=True)
+
+        data["token"] = token
+        data["refresh"] = refresh
+        data["user"] = user_obj
+
+        return data
+
+
 class ProfileDetailUpdateSerializer(ModelSerializer):
     """
     Serializer for updating user profile details.
@@ -226,6 +238,7 @@ class ProfileDetailUpdateSerializer(ModelSerializer):
             "blog_count": {"read_only": True},
             "likes": {"read_only": True},
             "followers": {"read_only": True},
+            "user_dp": {"read_only": True}
         }
 
 
@@ -258,8 +271,7 @@ class UserDetailUpdateSerializer(ModelSerializer):
         extra_kwargs = {
             "id": {"read_only": True},
             "username": {"read_only": True},
-            "email": {"read_only": True}
-        }
+            "email": {"read_only": True}}
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile')
@@ -269,3 +281,13 @@ class UserDetailUpdateSerializer(ModelSerializer):
             profile_serializer.save()
 
         return super().update(instance, validated_data)
+
+
+class VerificationSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    otp = serializers.CharField(max_length=6)
+
+    class Meta:
+        model = Profile
+        fields = ('username', 'otp')
+

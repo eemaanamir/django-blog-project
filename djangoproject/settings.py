@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'blogs.apps.BlogsConfig',
     'users.apps.UsersConfig',
     'emails.apps.EmailsConfig',
-    
+    'subscriptions.apps.SubscriptionsConfig',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -162,7 +163,6 @@ except psycopg2.Error as e:
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -171,7 +171,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-),
+    ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
@@ -215,18 +215,19 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 
-
-# 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
-
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = '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'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+STRIPE_SECRET_KEY = 'sk_test_51NxPPyERpA6j2bA4eFc6FkQzmXniCe0hbKztQI7KJy7xINhVkf8Flfv9LlBptEmFgWx8qcGsvy7pJLJJe6kwXiEF00Xe4X9ZPg'
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51NxPPyERpA6j2bA49GoTUl2Ywe4KgQ9apVo5gtyzOJkYHZqJpNJOpGj6htzXWO3Qrq8kwzgPi1twfTfA1rdTxBsk00eSeJYqBf'
+STRIPE_SECRET_WEBHOOK = 'whsec_52d076b7679a57cbcbbcb18d91e00827839f3b38117c83c5fe15ca2397c8bf2e'
+
