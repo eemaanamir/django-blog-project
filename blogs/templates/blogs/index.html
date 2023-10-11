@@ -66,10 +66,10 @@
     {#							</form>#}
                                 <div class="post-meta align-items-center text-center">
                                     <div style = "position:relative; top:10px;">
-                                        <figure class="author-figure mb-0 me-3 d-inline-block"><img src="{% get_static_prefix %}blogs/images/{{current_user.image}}" alt="Image" class="img-fluid"></figure>
+                                        <figure class="author-figure mb-0 me-3 d-inline-block"><img src="{{request.user.profile.user_dp.url}}" alt="Image" class="img-fluid"></figure>
                                         <ul class="js-clone-nav d-none d-lg-inline-block text-start site-menu mx-auto">
                                             <li class="has-children">
-                                                <a>{{ current_user.name}}</a>
+                                                <a>{{request.user.first_name}} {{ request.user.last_name }}</a>
                                                 <ul class="dropdown">
                                                     <li><a href="">View Profile</a></li>
                                                     <li><a href="">Edit Profile</a></li>
@@ -88,6 +88,34 @@
 			</div>
 		</div>
 	</nav>
+
+    {% if form_errors %}
+        <div style="background-color: #214252; width: 100%">
+			<div style="width: 500px; margin: 0 auto;" class="alert error">
+				<p class="inner">
+					{% for field, errors in form_errors.items %}
+                        <b><b>{{ field }}:</b></b>
+                        {% for error in errors %}
+                            <b>{{ error }}</b>
+                        {% endfor %}
+                    {% endfor %}
+				</p>
+			</div>
+        </div>
+
+    {% endif %}
+
+    {% if messages %}
+        <div style="background-color: #214252; width: 100%">
+			<div style="width: 500px; margin: 0 auto;" class="alert error">
+                {% for message in messages %}
+				<p class="inner" style="text-align: center">
+					<b><b>ERROR!</b></b>&nbsp;&nbsp;<b>{{message}}</b>
+                </p>
+                {% endfor %}
+			</div>
+        </div>
+    {% endif %}
 
 
     {% block content %}
