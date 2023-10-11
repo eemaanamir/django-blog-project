@@ -21,9 +21,9 @@
 							<img src="{% get_static_prefix %}blogs/images/{{blog.headerimage}}" alt="Image" class="img-fluid" style="width: 300px; height: 200px; object-fit: cover;">
 						</a>
 						<div>
-							<span class="date">{{blog.date}} &bullet; <a href="#">{{blog.topic}}</a></span>
-							<h2><a href="single.html">{{ blog.heading }}</a></h2>
-							<p>{{ blog.description }}</p>
+							<span class="date">{{blog.blog_date_time.date}} &bullet; <a href="#">{{blog.blog_topic}}</a></span>
+							<h2><a href="single.html">{{ blog.blog_title }}</a></h2>
+							<p>{{ blog.blog_summary }}</p>
 							<p>
                                 <a href="" class="btn btn-sm btn-outline-primary">Edit</a>
                                 <a href="" class="btn btn-sm btn-outline-primary">Delete</a>
@@ -37,7 +37,7 @@
                         {% endfor %}
                         </ul>
                     {% else %}
-                        <p>No blogs are available.</p>
+                        <p>No {{list_heading}} are available.</p>
                     {% endif %}
 
 
